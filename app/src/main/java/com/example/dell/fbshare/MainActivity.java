@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import static com.facebook.GraphRequest.newUploadPhotoRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -171,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void postToFacebook() {
 
-        String path = "me";
+        String path = "me/photos";
         AccessToken at = AccessToken.getCurrentAccessToken();
         Bundle parameters = new Bundle();
         byte[] imageData = null;
@@ -180,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         imageData = baos.toByteArray();
-
+        EditText cap=(EditText)findViewById(R.id.editText2);
+        final String caption=cap.getText().toString();
 
         // params.putString("method", "photos.upload");
         parameters.putByteArray("picture", imageData);
@@ -192,7 +196,45 @@ public class MainActivity extends AppCompatActivity {
 
                 //check graphResponse for success or failure
                 if (graphResponse.getError() == null) {
-                    Toast.makeText(MainActivity.this, "Successfully posted to Facebook", Toast.LENGTH_SHORT).show();
+                    Bundle params =new Bundle();
+                    params.putString("message",caption);
+                    try {
+                        params.putString("object_attachment",graphResponse.getJSONObject().getString("id"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONObject privacy = new JSONObject();
+
+                    try {
+                        privacy.put("value", "EVERYONE");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    params.putString("privacy", privacy.toString());
+                    new GraphRequest(
+                            AccessToken.getCurrentAccessToken(),
+                            "/me/feed",
+                            params,
+                            HttpMethod.POST,
+                            new GraphRequest.Callback() {
+                                public void onCompleted(GraphResponse response) {
+            /* handle the result */
+                                    if (response.getError() == null) {
+
+                                        Toast.makeText(MainActivity.this, "Successfully posted to Facebook", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(MainActivity.this, "Facebook: There was an error, Please Try Again "+response.getError().getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            }
+                    ).executeAsync();
+
+
                 } else {
                     Toast.makeText(MainActivity.this, "Facebook: There was an error, Please Try Again "+graphResponse.getError().getErrorMessage(), Toast.LENGTH_SHORT).show();
 
@@ -200,10 +242,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        GraphRequest request = new GraphRequest(at, path, parameters, method, cb);
+       /* GraphRequest request = new GraphRequest(at, path, parameters, method, cb);
         request.setParameters(parameters);
+        request.executeAsync();*/
+       GraphRequest request= newUploadPhotoRequest(at,path,bi,caption,null,cb);
         request.executeAsync();
-
 
     }
 

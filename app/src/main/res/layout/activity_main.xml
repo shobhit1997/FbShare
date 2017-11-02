@@ -4,43 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context="com.example.dell.fbshare.MainActivity">
 
     <TextView
+        android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/info"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:textSize="18sp"
-        />
+        android:textSize="18sp" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
+        android:layout_centerInParent="true" />
 
     <Button
         android:id="@+id/post_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Post on Facebook"
-        android:onClick="post"
+        android:layout_alignEnd="@+id/login_button"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/login_button"
-        android:layout_alignEnd="@+id/login_button"
-        android:layout_marginBottom="33dp" />
+        android:layout_marginBottom="33dp"
+        android:onClick="post"
+        android:text="Post on Facebook" />
+
     <Button
         android:id="@+id/choose_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose"
         android:onClick="choose"
-        android:layout_below="@+id/login_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="54dp" />
+        android:text="Choose"
+        android:layout_above="@+id/editText2"
+        android:layout_alignLeft="@+id/post_button"
+        android:layout_alignStart="@+id/post_button"
+        android:layout_marginBottom="20dp" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -51,4 +52,18 @@
         android:layout_toRightOf="@+id/login_button"
         android:scaleType="fitXY"
         app:srcCompat="@android:color/background_light" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/post_button"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_toLeftOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageView"
+        android:ems="10"
+        android:hint="Caption"
+        android:inputType="textPersonName" />
+
 </RelativeLayout>
